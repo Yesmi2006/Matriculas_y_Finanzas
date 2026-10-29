@@ -1,0 +1,47 @@
+name: lamb-kafka-dev
+
+# Broker de eventos para desarrollo local (S8).
+# Kafka 18092 y Kafka UI 18090 (no 19092/18085 de pagatu, para que no choquen si corren juntos).
+services:
+  lamb-kafka-dev:
+    image: apache/kafka:4.1.0
+    container_name: lamb-kafka-dev
+    restart: unless-stopped
+    ports:
+      - "18092:18092"
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:18092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://lamb-kafka-dev:9092,EXTERNAL://localhost:18092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@lamb-kafka-dev:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      # Los topics los declara cada servicio (KafkaTopicsConfig), no se crean solos
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+
+  lamb-kafka-ui-dev:
+    image: ghcr.io/kafbat/kafka-ui:v1.5.0
+    container_name: lamb-kafka-ui-dev
+    restart: unless-stopped
+    depends_on:
+      lamb-kafka-dev:
+        condition: service_healthy
+    ports:
+      - "18090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: lamb-dev
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: lamb-kafka-dev:9092

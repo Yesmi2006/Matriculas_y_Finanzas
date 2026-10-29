@@ -1,0 +1,134 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://lamb-keycloak:8080/realms/lamb
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: lamb-personas
+              uri: lb://lamb-personas-ms
+              predicates:
+                - Path=/api/v1/personas/**
+            - id: lamb-institucional-facultades
+              uri: lb://lamb-institucional-ms
+              predicates:
+                - Path=/api/v1/facultades/**
+            - id: lamb-institucional-programas
+              uri: lb://lamb-institucional-ms
+              predicates:
+                - Path=/api/v1/programas/**
+            - id: lamb-admision
+              uri: lb://lamb-admision-ms
+              predicates:
+                - Path=/api/v1/postulaciones/**
+            - id: lamb-curriculo
+              uri: lb://lamb-curriculo-ms
+              predicates:
+                - Path=/api/v1/planes-estudio/**
+            - id: lamb-matricula
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/matriculas/**
+            - id: lamb-matricula-periodos
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/periodos-academicos/**
+            - id: lamb-matricula-tipos
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/tipos-matricula/**
+            - id: lamb-matricula-cronogramas
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/cronogramas-matricula/**
+            - id: lamb-matricula-secciones
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/secciones/**
+            - id: lamb-matricula-reservas
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/reservas-vacante/**
+            - id: lamb-matricula-motivos
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/motivos-anulacion/**
+            - id: lamb-matricula-limites
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/limites-creditos/**
+            - id: lamb-matricula-excepciones
+              uri: lb://lamb-matricula-ms
+              predicates:
+                - Path=/api/v1/solicitudes-excepcion/**
+            - id: lamb-evaluacion
+              uri: lb://lamb-evaluacion-ms
+              predicates:
+                - Path=/api/v1/notas/**
+            - id: lamb-evaluacion-actas
+              uri: lb://lamb-evaluacion-ms
+              predicates:
+                - Path=/api/v1/actas/**
+            - id: lamb-trayectoria
+              uri: lb://lamb-trayectoria-ms
+              predicates:
+                - Path=/api/v1/trayectorias/**
+            - id: lamb-finanzas
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/pagos/**
+            - id: lamb-finanzas-conceptos
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/conceptos-pago/**
+            - id: lamb-finanzas-metodos
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/metodos-pago/**
+            - id: lamb-finanzas-mora
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/configuraciones-mora/**
+            - id: lamb-finanzas-motivos
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/motivos-pago/**
+            - id: lamb-finanzas-refinanciamiento
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/planes-refinanciamiento/**
+            - id: lamb-finanzas-descuentos
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/descuentos/**
+            - id: lamb-finanzas-documentos
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/documentos-pago/**
+            - id: lamb-finanzas-transacciones
+              uri: lb://lamb-finanzas-ms
+              predicates:
+                - Path=/api/v1/transacciones-pasarela/**
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+  client:
+    service-url:
+      defaultZone: http://lamb-eureka:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: never

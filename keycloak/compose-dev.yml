@@ -1,0 +1,53 @@
+name: lamb-keycloak-dev
+
+services:
+  keycloak-db:
+    image: postgres:17-alpine
+    container_name: lamb-keycloak-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lamb_keycloak
+      POSTGRES_USER: lamb_keycloak
+      POSTGRES_PASSWORD: lamb
+    ports:
+      - "15436:5432"
+    volumes:
+      - lamb_keycloak_db_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lamb_keycloak -d lamb_keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.0
+    container_name: lamb-keycloak
+    restart: unless-stopped
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin123
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/lamb_keycloak
+      KC_DB_USERNAME: lamb_keycloak
+      KC_DB_PASSWORD: lamb
+      KC_METRICS_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG: console,file
+      KC_LOG_FILE: /opt/keycloak/data/log/keycloak.log
+      KC_HTTP_MANAGEMENT_PORT: 9000
+    ports:
+      - "18180:8080"
+      - "19000:9000"
+    volumes:
+      - lamb_keycloak_dev_data:/opt/keycloak/data
+      - ./logs:/opt/keycloak/data/log
+      - ./import:/opt/keycloak/data/import
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+volumes:
+  lamb_keycloak_db_dev_data:
+  lamb_keycloak_dev_data:

@@ -1,0 +1,86 @@
+server:
+  http_listen_port: 9080
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://lamb-loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: lamb-personas-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-personas-ms
+          __path__: /var/log/lamb/lamb-personas-ms/logs/*.log
+
+  - job_name: lamb-institucional-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-institucional-ms
+          __path__: /var/log/lamb/lamb-institucional-ms/logs/*.log
+
+  - job_name: lamb-planificacion-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-planificacion-ms
+          __path__: /var/log/lamb/lamb-planificacion-ms/logs/*.log
+
+  - job_name: lamb-admision-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-admision-ms
+          __path__: /var/log/lamb/lamb-admision-ms/logs/*.log
+
+  - job_name: lamb-matricula-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-matricula-ms
+          __path__: /var/log/lamb/lamb-matricula-ms/logs/*.log
+
+  - job_name: lamb-evaluacion-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-evaluacion-ms
+          __path__: /var/log/lamb/lamb-evaluacion-ms/logs/*.log
+
+  - job_name: lamb-finanzas-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-finanzas-ms
+          __path__: /var/log/lamb/lamb-finanzas-ms/logs/*.log
+
+  - job_name: lamb-curriculo-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-curriculo-ms
+          __path__: /var/log/lamb/lamb-curriculo-ms/logs/*.log
+
+  - job_name: lamb-trayectoria-ms
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-trayectoria-ms
+          __path__: /var/log/lamb/lamb-trayectoria-ms/logs/*.log
+
+  - job_name: lamb-gateway
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-gateway
+          __path__: /var/log/lamb-gateway/*.log
+
+  - job_name: lamb-keycloak
+    static_configs:
+      - targets: [localhost]
+        labels:
+          application: lamb-keycloak
+          __path__: /var/log/lamb-keycloak/*.log

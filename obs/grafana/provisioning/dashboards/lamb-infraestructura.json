@@ -1,0 +1,106 @@
+{
+  "title": "Lamb - Infraestructura",
+  "uid": "lamb-infra",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "timezone": "browser",
+  "time": { "from": "now-30m", "to": "now" },
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Instancias activas",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "lamb-prometheus" },
+      "targets": [
+        {
+          "expr": "up{job=\"lamb-microservicios\"}",
+          "legendFormat": "{{application}}",
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "lamb-prometheus" }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Peticiones HTTP por segundo, por instancia",
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "lamb-prometheus" },
+      "targets": [
+        {
+          "expr": "sum by (instance) (rate(http_server_requests_seconds_count{job=\"lamb-microservicios\"}[1m]))",
+          "legendFormat": "{{instance}}",
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "lamb-prometheus" }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Conexiones a PostgreSQL",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "lamb-prometheus" },
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active",
+          "legendFormat": "active {{application}}",
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "lamb-prometheus" }
+        },
+        {
+          "expr": "hikaricp_connections_max",
+          "legendFormat": "max {{application}}",
+          "refId": "B",
+          "datasource": { "type": "prometheus", "uid": "lamb-prometheus" }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Peticiones al Gateway",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "lamb-prometheus" },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{job=\"lamb-microservicios\", uri=~\"/api/v1/.*\"}[1m])",
+          "legendFormat": "{{application}} {{uri}}",
+          "refId": "A",
+          "datasource": { "type": "prometheus", "uid": "lamb-prometheus" }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "logs",
+      "title": "Logs recientes - todos los servicios",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "datasource": { "type": "loki", "uid": "lamb-loki" },
+      "targets": [
+        {
+          "expr": "{application=~\"lamb-.*\"}",
+          "refId": "A",
+          "datasource": { "type": "loki", "uid": "lamb-loki" }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "logs",
+      "title": "Errores recientes - todos los servicios",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "datasource": { "type": "loki", "uid": "lamb-loki" },
+      "targets": [
+        {
+          "expr": "{application=~\"lamb-.*\", detected_level=\"error\"}",
+          "refId": "A",
+          "datasource": { "type": "loki", "uid": "lamb-loki" }
+        }
+      ]
+    }
+  ]
+}

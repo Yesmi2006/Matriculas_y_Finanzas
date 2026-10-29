@@ -1,0 +1,88 @@
+{
+  "realm": "lamb",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "roles": {
+    "realm": [
+      { "name": "ADMIN", "description": "Administrador del sistema" },
+      { "name": "COORDINADOR", "description": "Coordinador academico" },
+      { "name": "DOCENTE", "description": "Docente" },
+      { "name": "ESTUDIANTE", "description": "Estudiante / postulante" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "lamb-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4200"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "idPersona",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "idPersona",
+            "claim.name": "idPersona",
+            "jsonType.label": "long",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@lamb.upeu.edu.pe",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "Lamb",
+      "credentials": [
+        { "type": "password", "value": "admin123", "temporary": false }
+      ],
+      "realmRoles": ["ADMIN"],
+      "attributes": { "idPersona": ["1"] }
+    },
+    {
+      "username": "docente1",
+      "email": "docente1@lamb.upeu.edu.pe",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Docente",
+      "lastName": "Uno",
+      "credentials": [
+        { "type": "password", "value": "docente123", "temporary": false }
+      ],
+      "realmRoles": ["DOCENTE"],
+      "attributes": { "idPersona": ["2"] }
+    },
+    {
+      "username": "estudiante1",
+      "email": "estudiante1@lamb.upeu.edu.pe",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Estudiante",
+      "lastName": "Uno",
+      "credentials": [
+        { "type": "password", "value": "estudiante123", "temporary": false }
+      ],
+      "realmRoles": ["ESTUDIANTE"],
+      "attributes": { "idPersona": ["3"] }
+    }
+  ]
+}
